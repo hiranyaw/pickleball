@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0b150b">
+<title>Pickleball Log</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0b150b; --surface: #111e11; --border: #2a4a2a;
+    --green: #5dde5d; --green-dim: #1a3d1a;
+    --red: #e05555; --red-dim: #3d1a1a;
+    --text: #c8eab0; --muted: #4a7040; --accent: #a8f060;
+  }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Mono', monospace; min-height: 100dvh; display: flex; flex-direction: column; -webkit-tap-highlight-color: transparent; }
+
+  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 18px; display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 10; }
+  .h-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 3px; color: var(--accent); line-height: 1; }
+  .h-sub { font-size: 10px; color: var(--muted); letter-spacing: 1px; margin-top: 2px; }
+  #status { margin-left: auto; font-size: 10px; color: var(--muted); text-align: right; max-width: 80px; line-height: 1.4; transition: color 0.3s; }
+  #status.saving { color: var(--accent); }
+  #status.error { color: var(--red); }
+
+  nav { display: flex; background: var(--surface); border-bottom: 1px solid var(--border); }
+  nav button { flex: 1; padding: 11px; background: none; border: none; border-bottom: 2px solid transparent; color: var(--muted); font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; }
+  nav button.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(168,240,96,0.04); }
+
+  main { flex: 1; padding: 20px 18px 60px; max-width: 480px; margin: 0 auto; width: 100%; }
+
+  /* Setup */
+  .setup-wrap { padding: 24px 18px; max-width: 480px; margin: 0 auto; }
+  .setup-title { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--accent); letter-spacing: 3px; margin-bottom: 4px; }
+  .setup-sub { font-size: 12px; color: var(--muted); margin-bottom: 24px; }
+  .setup-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+  .setup-step { font-family: 'Bebas Neue', sans-serif; font-size: 13px; color: var(--accent); letter-spacing: 2px; margin-bottom: 10px; }
+  .setup-desc { font-size: 12px; color: var(--muted); line-height: 1.7; margin-bottom: 14px; }
+  .setup-desc a { color: var(--accent); }
+  .setup-desc code { background: rgba(168,240,96,0.1); padding: 4px 8px; border-radius: 4px; font-size: 10px; color: var(--accent); display: block; margin: 8px 0; word-break: break-all; line-height: 1.6; }
+  .setup-input { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px; color: var(--text); font-family: 'DM Mono', monospace; font-size: 11px; outline: none; margin-bottom: 12px; }
+  .setup-btn { width: 100%; padding: 14px; background: var(--green-dim); border: 1.5px solid var(--green); border-radius: 10px; color: var(--green); font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; cursor: pointer; }
+
+  /* Today */
+  .date-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .date-nav { background: var(--surface); border: 1px solid var(--border); color: var(--text); width: 38px; height: 38px; border-radius: 8px; font-size: 20px; cursor: pointer; }
+  .date-nav:disabled { opacity: 0.3; }
+  .date-label { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px; text-align: center; }
+  .date-sub { font-size: 10px; color: var(--muted); text-align: center; margin-top: 2px; }
+
+  .score-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px 20px 22px; margin-bottom: 20px; text-align: center; position: relative; overflow: hidden; }
+  .score-card::before { content:''; position:absolute; top:-50px; left:-50px; width:180px; height:180px; background:radial-gradient(circle,rgba(168,240,96,0.06) 0%,transparent 70%); pointer-events:none; }
+  .big-num { font-family: 'Bebas Neue', sans-serif; font-size: 84px; line-height: 1; color: var(--accent); }
+  .big-lbl { font-size: 11px; letter-spacing: 3px; color: var(--muted); margin-bottom: 18px; }
+  .wl-row { display: flex; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .wl-cell { flex: 1; padding: 14px 8px; text-align: center; }
+  .wl-cell+.wl-cell { border-left: 1px solid var(--border); }
+  .wl-num { font-family: 'Bebas Neue', sans-serif; font-size: 34px; line-height: 1; }
+  .wl-lbl { font-size: 10px; color: var(--muted); letter-spacing: 1px; margin-top: 2px; }
+
+  .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .btn { padding: 22px 10px; border-radius: 14px; border: none; font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 2px; cursor: pointer; transition: transform 0.1s; }
+  .btn:active { transform: scale(0.95); }
+  .btn-win { background: var(--green-dim); color: var(--green); border: 1.5px solid var(--green); }
+  .btn-loss { background: var(--red-dim); color: var(--red); border: 1.5px solid var(--red); }
+  .btn-undo { width:100%; padding:12px; background:var(--surface); border:1px solid var(--border); border-radius:10px; color:var(--muted); font-family:'DM Mono',monospace; font-size:12px; cursor:pointer; }
+  .btn-undo:disabled { opacity:0.3; cursor:default; }
+
+  /* History */
+  .day-row { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:13px 16px; margin-bottom:8px; display:flex; align-items:center; gap:10px; }
+  .pill { font-family:'Bebas Neue',sans-serif; font-size:14px; padding:3px 9px; border-radius:20px; }
+
+  /* Chart */
+  .donut-wrap { display: flex; flex-direction: column; align-items: center; padding: 10px 0 4px; }
+  .donut-container { position: relative; width: 220px; height: 220px; }
+  .donut-container canvas { position: absolute; top: 0; left: 0; }
+  .donut-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none; }
+  .donut-pct { font-family: 'Bebas Neue', sans-serif; font-size: 42px; color: var(--accent); line-height: 1; }
+  .donut-label { font-size: 10px; color: var(--muted); letter-spacing: 2px; margin-top: 2px; }
+  .donut-legend { display: flex; gap: 24px; margin-top: 20px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text); }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+
+  .chart-section { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+  .chart-section-title { font-family: 'Bebas Neue', sans-serif; font-size: 14px; color: var(--accent); letter-spacing: 2px; margin-bottom: 16px; text-align: center; }
+
+  /* Bar chart */
+  .bar-chart-wrap { overflow-x: auto; padding-bottom: 8px; }
+  .bar-chart-bars { display: flex; align-items: flex-end; gap: 6px; padding: 4px; }
+  .bar-col { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 36px; }
+  .bar-stack { width: 100%; height: 80px; display: flex; flex-direction: column; justify-content: flex-end; gap: 2px; }
+  .bar-w { background: #2d6e2d; border-radius: 3px 3px 0 0; border: 1px solid #5dde5d; border-bottom: none; }
+  .bar-l { background: #6e2d2d; border-radius: 0 0 3px 3px; border: 1px solid #e05555; border-top: none; }
+
+  .stat-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:16px; }
+  .stat-box { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px 8px; text-align:center; }
+  .stat-val { font-family:'Bebas Neue',sans-serif; font-size:28px; color:var(--accent); }
+  .stat-lbl { font-size:9px; color:var(--muted); letter-spacing:1px; margin-top:3px; }
+
+  .tab { display:none; } .tab.active { display:block; }
+  .empty { text-align:center; color:var(--muted); padding:40px 0; font-size:13px; }
+  .reset-link { display:block; text-align:center; margin-top:24px; font-size:11px; color:var(--muted); cursor:pointer; text-decoration:underline; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script>
+const URL_KEY = "pb-sheet-url";
+const LOG_KEY = "pb-log";
+let sheetUrl = localStorage.getItem(URL_KEY) || "";
+let log = JSON.parse(localStorage.getItem(LOG_KEY) || "{}");
+let activeTab = "today";
+let currentDate = todayStr();
+
+function todayStr() { return new Date().toISOString().slice(0,10); }
+
+function fmtDate(d) {
+  const [y,m,day] = d.split("-").map(Number);
+  const dt = new Date(y, m-1, day);
+  const t = todayStr();
+  const ydt = new Date(); ydt.setDate(ydt.getDate()-1); const ys = ydt.toISOString().slice(0,10);
+  const short = d===t?"TODAY":d===ys?"YESTERDAY":dt.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"}).toUpperCase();
+  return { short, long: dt.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"}) };
+}
+
+function allTime() {
+  const v = Object.values(log);
+  const tp = v.reduce((s,x)=>s+x.played,0), tw = v.reduce((s,x)=>s+x.won,0);
+  return tp>0 ? `ALL TIME · ${tp}P ${tw}W ${tp-tw}L · ${Math.round(tw/tp*100)}%` : "No matches yet";
+}
+
+function saveLocal() { localStorage.setItem(LOG_KEY, JSON.stringify(log)); }
+
+async function syncToSheet() {
+  if (!sheetUrl) return;
+  setStatus("Saving…", "saving");
+  try {
+    await fetch(sheetUrl, { method:"POST", mode:"no-cors", headers:{"Content-Type":"text/plain"}, body:JSON.stringify({action:"sync",log}) });
+    setStatus("Saved ✓", "");
+  } catch(e) { setStatus("Save failed","error"); }
+}
+
+function setStatus(msg, cls) {
+  const el = document.getElementById("status");
+  if (el) { el.textContent = msg; el.className = cls; }
+}
+
+// ── DONUT CHART ──────────────────────────────────────────────────────────────
+function drawDonut(canvasId, wins, losses) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const W = canvas.width, H = canvas.height;
+  const cx = W/2, cy = H/2, r = W*0.42, inner = W*0.27;
+  ctx.clearRect(0,0,W,H);
+
+  const total = wins + losses;
+  if (total === 0) {
+    // empty state ring
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI*2);
+    ctx.arc(cx, cy, inner, Math.PI*2, 0, true);
+    ctx.fillStyle = "#1a2a1a";
+    ctx.fill();
+    return;
+  }
+
+  const winAngle = (wins/total) * Math.PI*2;
+  const gap = 0.04;
+
+  // Win slice
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.arc(cx, cy, r, -Math.PI/2 + gap, -Math.PI/2 + winAngle - gap);
+  ctx.arc(cx, cy, inner, -Math.PI/2 + winAngle - gap, -Math.PI/2 + gap, true);
+  ctx.closePath();
+  ctx.fillStyle = "#2d6e2d";
+  ctx.fill();
+  ctx.strokeStyle = "#5dde5d";
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Loss slice
+  if (losses > 0) {
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, -Math.PI/2 + winAngle + gap, -Math.PI/2 + Math.PI*2 - gap);
+    ctx.arc(cx, cy, inner, -Math.PI/2 + Math.PI*2 - gap, -Math.PI/2 + winAngle + gap, true);
+    ctx.closePath();
+    ctx.fillStyle = "#6e2d2d";
+    ctx.fill();
+    ctx.strokeStyle = "#e05555";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+}
+
+function drawBarChart(days) {
+  const maxP = Math.max(...days.map(([,v])=>v.played), 1);
+  return `<div class="bar-chart-wrap"><div class="bar-chart-bars" style="min-width:${days.length*44}px">
+    ${days.map(([date,v])=>{
+      const p = v.played>0 ? Math.round(v.won/v.played*100) : 0;
+      const wh = Math.max(Math.round(v.won/maxP*76), v.won>0?4:0);
+      const lh = Math.max(Math.round((v.played-v.won)/maxP*76), (v.played-v.won)>0?4:0);
+      const {short} = fmtDate(date);
+      return `<div class="bar-col">
+        <div style="font-size:9px;color:var(--accent)">${p}%</div>
+        <div class="bar-stack">
+          <div class="bar-w" style="height:${wh}px"></div>
+          <div class="bar-l" style="height:${lh}px"></div>
+        </div>
+        <div style="font-size:9px;color:var(--muted)">${short.slice(0,3)}</div>
+        <div style="font-size:10px;color:#7ecf5a">${v.played}P</div>
+      </div>`;
+    }).join("")}
+  </div>
+  <div style="display:flex;gap:16px;justify-content:center;margin-top:10px;font-size:11px;color:var(--muted)">
+    <span style="color:var(--green)">■</span> Wins &nbsp; <span style="color:var(--red)">■</span> Losses
+  </div></div>`;
+}
+
+// ── RENDER ───────────────────────────────────────────────────────────────────
+function render() {
+  if (!sheetUrl) { renderSetup(); return; }
+  renderApp();
+}
+
+function renderSetup() {
+  document.getElementById("root").innerHTML = `
+    <div class="setup-wrap">
+      <div class="setup-title">🏓 Pickleball</div>
+      <div class="setup-sub">Connect your Google Sheet in 3 steps — free, no API key needed.</div>
+      <div class="setup-card">
+        <div class="setup-step">STEP 1 — Create the Google Sheet</div>
+        <div class="setup-desc">Go to <a href="https://sheets.new" target="_blank">sheets.new</a> on a computer. Name it <strong>Pickleball Log</strong>.</div>
+      </div>
+      <div class="setup-card">
+        <div class="setup-step">STEP 2 — Add the Apps Script</div>
+        <div class="setup-desc">In your sheet: <strong>Extensions → Apps Script</strong>. Delete existing code and paste this:
+          <code>function doPost(e){try{var d=JSON.parse(e.postData.contents);var ss=SpreadsheetApp.getActiveSpreadsheet();var sh=ss.getSheetByName("Log")||ss.insertSheet("Log");sh.clearContents();sh.appendRow(["Date","Played","Won","Lost","Win%"]);var log=d.log;Object.keys(log).sort().forEach(function(date){var v=log[date];var pct=v.played>0?Math.round(v.won/v.played*100):0;sh.appendRow([date,v.played,v.won,v.played-v.won,pct+"%"]);});return ContentService.createTextOutput("ok");}catch(err){return ContentService.createTextOutput(err.toString());}}</code>
+          Click <strong>Save</strong>.
+        </div>
+      </div>
+      <div class="setup-card">
+        <div class="setup-step">STEP 3 — Deploy & paste URL</div>
+        <div class="setup-desc"><strong>Deploy → New deployment → Web app</strong><br>Set access to <strong>Anyone</strong> → Deploy → copy URL.</div>
+        <input class="setup-input" id="urlInput" type="url" placeholder="https://script.google.com/macros/s/...">
+        <button class="setup-btn" onclick="saveUrl()">CONNECT →</button>
+      </div>
+    </div>`;
+}
+
+function saveUrl() {
+  const v = document.getElementById("urlInput").value.trim();
+  if (!v.includes("script.google.com")) { alert("Paste the Apps Script Web app URL"); return; }
+  sheetUrl = v; localStorage.setItem(URL_KEY, sheetUrl); render();
+}
+
+function renderApp() {
+  const d = log[currentDate] || { played:0, won:0, history:[] };
+  const lost = d.played - d.won;
+  const pct = d.played>0 ? Math.round(d.won/d.played*100)+"%" : "—";
+  const { short, long } = fmtDate(currentDate);
+  const isToday = currentDate >= todayStr();
+  const canUndo = (d.history||[]).length > 0;
+
+  const days = Object.entries(log).filter(([,v])=>v.played>0).sort((a,b)=>b[0].localeCompare(a[0]));
+  const tp = days.reduce((s,[,v])=>s+v.played,0), tw = days.reduce((s,[,v])=>s+v.won,0), tl = tp-tw;
+  const overallPct = tp>0 ? Math.round(tw/tp*100) : 0;
+  const cdays = [...days].sort((a,b)=>a[0].localeCompare(b[0])).slice(-14);
+
+  // Today donut values
+  const todayWins = d.won, todayLosses = d.played - d.won;
+  const todayPct = d.played>0 ? Math.round(d.won/d.played*100) : 0;
+
+  document.getElementById("root").innerHTML = `
+    <header>
+      <span style="font-size:22px">🏓</span>
+      <div>
+        <div class="h-title">Pickleball Log</div>
+        <div class="h-sub" id="at">${allTime()}</div>
+      </div>
+      <div id="status">Synced ✓</div>
+    </header>
+    <nav>
+      <button onclick="switchTab('today')" class="${activeTab==='today'?'active':''}">Today</button>
+      <button onclick="switchTab('history')" class="${activeTab==='history'?'active':''}">History</button>
+      <button onclick="switchTab('chart')" class="${activeTab==='chart'?'active':''}">Chart</button>
+    </nav>
+    <main>
+
+      <!-- TODAY -->
+      <div id="tab-today" class="tab${activeTab==='today'?' active':''}">
+        <div class="date-bar">
+          <button class="date-nav" onclick="changeDay(-1)">‹</button>
+          <div>
+            <div class="date-label">${short}</div>
+            <div class="date-sub">${long}</div>
+          </div>
+          <button class="date-nav" onclick="changeDay(1)" ${isToday?"disabled":""}>›</button>
+        </div>
+        <div class="score-card">
+          <div class="big-num">${d.played}</div>
+          <div class="big-lbl">Matches Played</div>
+          <div class="wl-row">
+            <div class="wl-cell"><div class="wl-num" style="color:var(--green)">${d.won}</div><div class="wl-lbl">WINS</div></div>
+            <div class="wl-cell" style="border-left:1px solid var(--border)"><div class="wl-num" style="color:var(--red)">${lost}</div><div class="wl-lbl">LOSSES</div></div>
+            <div class="wl-cell" style="border-left:1px solid var(--border)"><div class="wl-num" style="color:var(--accent)">${pct}</div><div class="wl-lbl">WIN %</div></div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-win" onclick="logMatch(true)">✓ WIN</button>
+          <button class="btn btn-loss" onclick="logMatch(false)">✗ LOSS</button>
+        </div>
+        <button class="btn-undo" onclick="undoLast()" ${canUndo?"":"disabled"}>↩ Undo last match</button>
+        <span class="reset-link" onclick="resetUrl()">Change Google Sheet connection</span>
+      </div>
+
+      <!-- HISTORY -->
+      <div id="tab-history" class="tab${activeTab==='history'?' active':''}">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--accent);letter-spacing:2px">ALL DAYS</div>
+          ${tp>0?`<div style="font-size:11px;color:var(--muted);text-align:right">${days.length} days<br>${tp} matches · ${overallPct}% win</div>`:""}
+        </div>
+        ${days.length===0
+          ? `<div class="empty"><div style="font-size:36px;margin-bottom:12px">🏓</div>No matches logged yet</div>`
+          : days.map(([date,v])=>{
+              const p=v.played>0?Math.round(v.won/v.played*100):0;
+              const {short}=fmtDate(date);
+              return `<div class="day-row">
+                <div><div style="font-size:12px">${short}</div><div style="font-size:10px;color:var(--muted)">${date}</div></div>
+                <div style="display:flex;gap:7px;align-items:center;margin-left:auto">
+                  <span class="pill" style="background:rgba(168,240,96,0.1);color:var(--accent)">${v.played}P</span>
+                  <span class="pill" style="background:rgba(93,222,93,0.12);color:var(--green)">${v.won}W</span>
+                  <span class="pill" style="background:rgba(224,85,85,0.12);color:var(--red)">${v.played-v.won}L</span>
+                  <span style="font-size:11px;color:var(--muted);min-width:30px;text-align:right">${p}%</span>
+                </div>
+              </div>`;
+            }).join("")}
+      </div>
+
+      <!-- CHART -->
+      <div id="tab-chart" class="tab${activeTab==='chart'?' active':''}">
+
+        ${tp===0 ? `<div class="empty"><div style="font-size:36px;margin-bottom:12px">📊</div>No data yet — log some matches first</div>` : `
+
+        <!-- All-time donut -->
+        <div class="chart-section">
+          <div class="chart-section-title">ALL-TIME WIN RATE</div>
+          <div class="donut-wrap">
+            <div class="donut-container">
+              <canvas id="donut-all" width="220" height="220"></canvas>
+              <div class="donut-center">
+                <div class="donut-pct">${overallPct}%</div>
+                <div class="donut-label">WIN RATE</div>
+              </div>
+            </div>
+            <div class="donut-legend">
+              <div class="legend-item">
+                <div class="legend-dot" style="background:#5dde5d;border:1px solid #5dde5d"></div>
+                <div><div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--green)">${tw} Wins</div><div style="font-size:10px;color:var(--muted)">${Math.round(tw/tp*100)}%</div></div>
+              </div>
+              <div class="legend-item">
+                <div class="legend-dot" style="background:#e05555;border:1px solid #e05555"></div>
+                <div><div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--red)">${tl} Losses</div><div style="font-size:10px;color:var(--muted)">${Math.round(tl/tp*100)}%</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Today donut -->
+        ${d.played > 0 ? `
+        <div class="chart-section">
+          <div class="chart-section-title">TODAY — ${short}</div>
+          <div class="donut-wrap">
+            <div class="donut-container">
+              <canvas id="donut-today" width="220" height="220"></canvas>
+              <div class="donut-center">
+                <div class="donut-pct">${todayPct}%</div>
+                <div class="donut-label">TODAY</div>
+              </div>
+            </div>
+            <div class="donut-legend">
+              <div class="legend-item">
+                <div class="legend-dot" style="background:#5dde5d"></div>
+                <div><div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--green)">${todayWins} Wins</div><div style="font-size:10px;color:var(--muted)">${todayPct}%</div></div>
+              </div>
+              <div class="legend-item">
+                <div class="legend-dot" style="background:#e05555"></div>
+                <div><div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--red)">${todayLosses} Losses</div><div style="font-size:10px;color:var(--muted)">${100-todayPct}%</div></div>
+              </div>
+            </div>
+          </div>
+        </div>` : ""}
+
+        <!-- Bar chart -->
+        ${cdays.length > 1 ? `
+        <div class="chart-section">
+          <div class="chart-section-title">LAST 14 DAYS</div>
+          ${drawBarChart(cdays)}
+        </div>` : ""}
+
+        <!-- Stats -->
+        <div class="stat-grid">
+          <div class="stat-box"><div class="stat-val">${tp}</div><div class="stat-lbl">PLAYED</div></div>
+          <div class="stat-box"><div class="stat-val">${tw}</div><div class="stat-lbl">WINS</div></div>
+          <div class="stat-box"><div class="stat-val">${overallPct}%</div><div class="stat-lbl">WIN RATE</div></div>
+        </div>
+        `}
+      </div>
+
+    </main>`;
+
+  // Draw donuts after DOM update
+  if (activeTab === "chart" && tp > 0) {
+    requestAnimationFrame(() => {
+      drawDonut("donut-all", tw, tl);
+      if (d.played > 0) drawDonut("donut-today", todayWins, todayLosses);
+    });
+  }
+}
+
+// ── ACTIONS ──────────────────────────────────────────────────────────────────
+async function logMatch(won) {
+  if (!log[currentDate]) log[currentDate] = { played:0, won:0, history:[] };
+  log[currentDate].played++; if (won) log[currentDate].won++;
+  log[currentDate].history = [...(log[currentDate].history||[]), won?"W":"L"];
+  saveLocal(); renderApp(); await syncToSheet();
+  const el = document.getElementById("at"); if(el) el.textContent = allTime();
+  if (navigator.vibrate) navigator.vibrate(won?[40]:[20,30,20]);
+}
+
+async function undoLast() {
+  const d = log[currentDate]; if (!d||d.played===0) return;
+  const hist = [...(d.history||[])]; const last = hist.pop();
+  log[currentDate] = { played:d.played-1, won:last==="W"?d.won-1:d.won, history:hist };
+  if (log[currentDate].played===0) delete log[currentDate];
+  saveLocal(); renderApp(); await syncToSheet();
+}
+
+function changeDay(dir) {
+  const [y,m,d] = currentDate.split("-").map(Number);
+  const dt = new Date(y,m-1,d+dir); const next = dt.toISOString().slice(0,10);
+  if (next>todayStr()) return; currentDate=next; renderApp();
+}
+
+function switchTab(t) { activeTab=t; renderApp(); }
+function resetUrl() { if(confirm("Disconnect Google Sheet?")){ localStorage.removeItem(URL_KEY); sheetUrl=""; render(); } }
+
+render();
+</script>
+</body>
+</html>

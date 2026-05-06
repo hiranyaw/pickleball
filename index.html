@@ -17,15 +17,16 @@
     --green: #5dde5d; --green-dim: #1a3d1a;
     --red: #e05555; --red-dim: #3d1a1a;
     --text: #c8eab0; --muted: #4a7040; --accent: #a8f060;
+    --gold: #f0c060; --gold-dim: #3d2e0a;
   }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'DM Mono', monospace; min-height: 100dvh; display: flex; flex-direction: column; -webkit-tap-highlight-color: transparent; }
 
   header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 18px; display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 10; }
   .h-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 3px; color: var(--accent); line-height: 1; }
   .h-sub { font-size: 10px; color: var(--muted); letter-spacing: 1px; margin-top: 2px; }
   #status { margin-left: auto; font-size: 10px; color: var(--muted); text-align: right; max-width: 80px; line-height: 1.4; transition: color 0.3s; }
-  #status.saving { color: var(--accent); }
-  #status.error { color: var(--red); }
+  #status.saving { color: var(--accent); } #status.error { color: var(--red); }
 
   nav { display: flex; background: var(--surface); border-bottom: 1px solid var(--border); }
   nav button { flex: 1; padding: 11px; background: none; border: none; border-bottom: 2px solid transparent; color: var(--muted); font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; }
@@ -60,6 +61,32 @@
   .wl-num { font-family: 'Bebas Neue', sans-serif; font-size: 34px; line-height: 1; }
   .wl-lbl { font-size: 10px; color: var(--muted); letter-spacing: 1px; margin-top: 2px; }
 
+  /* Pre-match entry panel */
+  .entry-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 16px; }
+  .entry-section-title { font-family: 'Bebas Neue', sans-serif; font-size: 12px; color: var(--muted); letter-spacing: 2px; margin-bottom: 10px; }
+  .entry-section-title span { font-size: 10px; color: var(--muted); opacity: 0.6; font-family: 'DM Mono', monospace; letter-spacing: 0; text-transform: none; }
+  .entry-divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+
+  /* Confidence stars */
+  .conf-stars { display: flex; gap: 7px; justify-content: center; }
+  .conf-star-btn {
+    flex: 1; max-width: 60px; padding: 10px 4px 8px;
+    border-radius: 10px; background: var(--bg); border: 1.5px solid var(--border);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.12s; gap: 3px;
+    font-family: 'Bebas Neue', sans-serif; font-size: 12px; color: var(--muted);
+  }
+  .conf-star-btn .si { font-size: 22px; line-height: 1; }
+  .conf-star-btn.selected { background: var(--gold-dim); border-color: var(--gold); color: var(--gold); }
+  .conf-star-btn:hover { border-color: rgba(240,192,96,0.5); }
+
+  /* Score inputs */
+  .score-inputs { display: flex; align-items: center; gap: 10px; }
+  .score-inputs input { flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px 8px; color: var(--text); font-family: 'Bebas Neue', sans-serif; font-size: 28px; text-align: center; outline: none; width: 100%; -moz-appearance: textfield; }
+  .score-inputs input::-webkit-inner-spin-button, .score-inputs input::-webkit-outer-spin-button { -webkit-appearance: none; }
+  .score-inputs input:focus { border-color: var(--accent); }
+  .score-vs { font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--muted); }
+
   .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
   .btn { padding: 22px 10px; border-radius: 14px; border: none; font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 2px; cursor: pointer; transition: transform 0.1s; }
   .btn:active { transform: scale(0.95); }
@@ -68,13 +95,21 @@
   .btn-undo { width:100%; padding:12px; background:var(--surface); border:1px solid var(--border); border-radius:10px; color:var(--muted); font-family:'DM Mono',monospace; font-size:12px; cursor:pointer; }
   .btn-undo:disabled { opacity:0.3; cursor:default; }
 
+  .match-list { margin-bottom: 14px; }
+  .match-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 6px; }
+  .match-num { font-size: 10px; color: var(--muted); width: 18px; flex-shrink: 0; }
+  .match-result { font-family: 'Bebas Neue', sans-serif; font-size: 14px; flex-shrink: 0; }
+  .match-conf { font-size: 11px; color: var(--gold); margin-left: 2px; flex-shrink: 0; }
+  .match-score { font-family: 'Bebas Neue', sans-serif; font-size: 16px; margin-left: auto; flex-shrink: 0; }
+
   .day-row { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:13px 16px; margin-bottom:8px; display:flex; align-items:center; gap:10px; }
   .pill { font-family:'Bebas Neue',sans-serif; font-size:14px; padding:3px 9px; border-radius:20px; }
 
+  /* Charts */
   .donut-wrap { display: flex; flex-direction: column; align-items: center; padding: 10px 0 4px; }
   .donut-container { position: relative; width: 220px; height: 220px; }
   .donut-container canvas { position: absolute; top: 0; left: 0; }
-  .donut-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none; }
+  .donut-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; pointer-events: none; }
   .donut-pct { font-family: 'Bebas Neue', sans-serif; font-size: 42px; color: var(--accent); line-height: 1; }
   .donut-label { font-size: 10px; color: var(--muted); letter-spacing: 2px; margin-top: 2px; }
   .donut-legend { display: flex; gap: 24px; margin-top: 20px; }
@@ -82,7 +117,8 @@
   .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
 
   .chart-section { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
-  .chart-section-title { font-family: 'Bebas Neue', sans-serif; font-size: 14px; color: var(--accent); letter-spacing: 2px; margin-bottom: 16px; text-align: center; }
+  .chart-section-title { font-family: 'Bebas Neue', sans-serif; font-size: 14px; color: var(--accent); letter-spacing: 2px; margin-bottom: 4px; text-align: center; }
+  .chart-section-sub { font-size: 10px; color: var(--muted); text-align: center; margin-bottom: 14px; }
 
   .bar-chart-wrap { overflow-x: auto; padding-bottom: 8px; }
   .bar-chart-bars { display: flex; align-items: flex-end; gap: 6px; padding: 4px; }
@@ -91,11 +127,33 @@
   .bar-w { background: #2d6e2d; border-radius: 3px 3px 0 0; border: 1px solid #5dde5d; border-bottom: none; }
   .bar-l { background: #6e2d2d; border-radius: 0 0 3px 3px; border: 1px solid #e05555; border-top: none; }
 
+  .pts-bar-wrap { overflow-x: auto; padding-bottom: 8px; }
+  .pts-bar-inner { display: flex; align-items: flex-end; gap: 6px; padding: 4px; }
+  .pts-col { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 36px; }
+  .pts-stack { width: 100%; height: 80px; display: flex; flex-direction: column; justify-content: flex-end; gap: 1px; }
+  .pts-won-bar { background: #2a5c2a; border-radius: 3px 3px 0 0; border: 1px solid #5dde5d; border-bottom: none; }
+  .pts-lost-bar { background: #5c2a2a; border-radius: 0 0 3px 3px; border: 1px solid #e05555; border-top: none; }
+
+  /* Confidence chart */
+  .conf-chart-wrap { margin-top: 4px; }
+  .conf-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .conf-row-lbl { font-family: 'Bebas Neue', sans-serif; font-size: 14px; color: var(--gold); width: 28px; flex-shrink: 0; text-align: right; }
+  .conf-bar-track { flex: 1; height: 30px; background: rgba(255,255,255,0.04); border-radius: 6px; overflow: hidden; display: flex; }
+  .conf-bar-win { background: #2d6e2d; display: flex; align-items: center; justify-content: flex-end; padding-right: 5px; min-width: 0; }
+  .conf-bar-loss { background: #6e2d2d; display: flex; align-items: center; padding-left: 5px; min-width: 0; }
+  .conf-bar-lbl { font-family: 'Bebas Neue', sans-serif; font-size: 12px; white-space: nowrap; overflow: hidden; }
+  .conf-row-meta { font-size: 10px; color: var(--muted); width: 52px; flex-shrink: 0; text-align: right; line-height: 1.4; }
+
+  .insight-box { background: rgba(240,192,96,0.07); border: 1px solid rgba(240,192,96,0.22); border-radius: 10px; padding: 12px 14px; margin-top: 14px; font-size: 11px; color: var(--text); line-height: 1.7; }
+  .insight-box strong { color: var(--gold); }
+
   .stat-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:16px; }
-  .stat-box { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px 8px; text-align:center; }
+  .stat-box { background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:14px 8px; text-align:center; }
   .stat-val { font-family:'Bebas Neue',sans-serif; font-size:28px; color:var(--accent); }
   .stat-lbl { font-size:9px; color:var(--muted); letter-spacing:1px; margin-top:3px; }
+  .stat-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
 
+  .trend-wrap { overflow-x: auto; padding-bottom: 4px; }
   .tab { display:none; } .tab.active { display:block; }
   .empty { text-align:center; color:var(--muted); padding:40px 0; font-size:13px; }
   .reset-link { display:block; text-align:center; margin-top:24px; font-size:11px; color:var(--muted); cursor:pointer; text-decoration:underline; }
@@ -103,261 +161,409 @@
 </head>
 <body>
 <div id="root"></div>
-
-<!-- Inline SVG icon as favicon -->
 <script>
-// Generate SVG icon and set as favicon
-const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <rect width="100" height="100" rx="22" fill="#0b150b"/>
-  <rect width="100" height="100" rx="22" fill="url(#g)"/>
-  <defs>
-    <radialGradient id="g" cx="30%" cy="30%">
-      <stop offset="0%" stop-color="#1a3d1a"/>
-      <stop offset="100%" stop-color="#0b150b"/>
-    </radialGradient>
-  </defs>
-  <!-- Paddle head -->
-  <ellipse cx="52" cy="42" rx="26" ry="28" fill="#2d6e2d" stroke="#5dde5d" stroke-width="2.5"/>
-  <!-- Paddle grip -->
-  <rect x="47" y="67" width="10" height="22" rx="5" fill="#a8f060"/>
-  <!-- Court lines on paddle -->
-  <line x1="52" y1="16" x2="52" y2="68" stroke="#a8f060" stroke-width="1.5" opacity="0.4"/>
-  <line x1="27" y1="42" x2="77" y2="42" stroke="#a8f060" stroke-width="1.5" opacity="0.4"/>
-  <!-- Ball -->
-  <circle cx="76" cy="24" r="10" fill="#a8f060"/>
-  <circle cx="76" cy="24" r="10" fill="none" stroke="#0b150b" stroke-width="1"/>
-  <path d="M70 20 Q76 16 82 20" stroke="#0b150b" stroke-width="1.2" fill="none"/>
-  <path d="M70 28 Q76 32 82 28" stroke="#0b150b" stroke-width="1.2" fill="none"/>
-</svg>`;
-
-const blob = new Blob([svg], {type: 'image/svg+xml'});
-const url = URL.createObjectURL(blob);
-const link = document.createElement('link');
-link.rel = 'icon'; link.href = url;
-document.head.appendChild(link);
-
-// Also set apple touch icon
-const appleLink = document.createElement('link');
-appleLink.rel = 'apple-touch-icon'; appleLink.href = url;
-document.head.appendChild(appleLink);
+const _s=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#0b150b"/><defs><radialGradient id="g" cx="30%" cy="30%"><stop offset="0%" stop-color="#1a3d1a"/><stop offset="100%" stop-color="#0b150b"/></radialGradient></defs><rect width="100" height="100" rx="22" fill="url(#g)"/><ellipse cx="52" cy="42" rx="26" ry="28" fill="#2d6e2d" stroke="#5dde5d" stroke-width="2.5"/><rect x="47" y="67" width="10" height="22" rx="5" fill="#a8f060"/><line x1="52" y1="16" x2="52" y2="68" stroke="#a8f060" stroke-width="1.5" opacity="0.4"/><line x1="27" y1="42" x2="77" y2="42" stroke="#a8f060" stroke-width="1.5" opacity="0.4"/><circle cx="76" cy="24" r="10" fill="#a8f060"/><circle cx="76" cy="24" r="10" fill="none" stroke="#0b150b" stroke-width="1"/><path d="M70 20 Q76 16 82 20" stroke="#0b150b" stroke-width="1.2" fill="none"/><path d="M70 28 Q76 32 82 28" stroke="#0b150b" stroke-width="1.2" fill="none"/></svg>`;
+const _b=new Blob([_s],{type:'image/svg+xml'});const _u=URL.createObjectURL(_b);
+['icon','apple-touch-icon'].forEach(r=>{const l=document.createElement('link');l.rel=r;l.href=_u;document.head.appendChild(l);});
 </script>
-
 <script>
-const URL_KEY = "pb-sheet-url";
-const LOG_KEY = "pb-log";
-let sheetUrl = localStorage.getItem(URL_KEY) || "";
-let log = JSON.parse(localStorage.getItem(LOG_KEY) || "{}");
-let activeTab = "today";
-let currentDate = todayStr();
+const URL_KEY="pb-sheet-url", LOG_KEY="pb-log";
+let sheetUrl=localStorage.getItem(URL_KEY)||"";
+let log=JSON.parse(localStorage.getItem(LOG_KEY)||"{}");
+let activeTab="today";
+let currentDate=todayStr();
+let selectedConf=0;
 
-function todayStr() { return new Date().toISOString().slice(0,10); }
+function todayStr(){const n=new Date();return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;}
+function localDateStr(dt){return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;}
 
-function fmtDate(d) {
-  const [y,m,day] = d.split("-").map(Number);
-  const dt = new Date(y, m-1, day);
-  const t = todayStr();
-  const ydt = new Date(); ydt.setDate(ydt.getDate()-1); const ys = ydt.toISOString().slice(0,10);
-  const short = d===t?"TODAY":d===ys?"YESTERDAY":dt.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"}).toUpperCase();
-  return { short, long: dt.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"}) };
+function fmtDate(d){
+  const [y,m,day]=d.split("-").map(Number);
+  const dt=new Date(y,m-1,day);
+  const t=todayStr();
+  const yd=new Date();yd.setDate(yd.getDate()-1);
+  const ys=localDateStr(yd);
+  const short=d===t?"TODAY":d===ys?"YESTERDAY":dt.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"}).toUpperCase();
+  return{short,long:dt.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"})};
 }
 
-function allTime() {
-  const v = Object.values(log);
-  const tp = v.reduce((s,x)=>s+x.played,0), tw = v.reduce((s,x)=>s+x.won,0);
-  return tp>0 ? `ALL TIME · ${tp}P ${tw}W ${tp-tw}L · ${Math.round(tw/tp*100)}%` : "No matches yet";
+function allTime(){
+  const v=Object.values(log);
+  const tp=v.reduce((s,x)=>s+x.played,0),tw=v.reduce((s,x)=>s+x.won,0);
+  return tp>0?`ALL TIME · ${tp}P ${tw}W ${tp-tw}L · ${Math.round(tw/tp*100)}%`:"No matches yet";
 }
 
-function saveLocal() { localStorage.setItem(LOG_KEY, JSON.stringify(log)); }
+function saveLocal(){localStorage.setItem(LOG_KEY,JSON.stringify(log));}
 
-async function syncToSheet() {
-  if (!sheetUrl) return;
-  setStatus("Saving…", "saving");
-  try {
-    await fetch(sheetUrl, { method:"POST", mode:"no-cors", headers:{"Content-Type":"text/plain"}, body:JSON.stringify({action:"sync",log}) });
-    setStatus("Saved ✓", "");
-  } catch(e) { setStatus("Save failed","error"); }
+async function syncToSheet(){
+  if(!sheetUrl)return;setStatus("Saving…","saving");
+  try{await fetch(sheetUrl,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify({action:"sync",log})});setStatus("Saved ✓","");}
+  catch(e){setStatus("Save failed","error");}
 }
 
-function setStatus(msg, cls) {
-  const el = document.getElementById("status");
-  if (el) { el.textContent = msg; el.className = cls; }
+function setStatus(msg,cls){const el=document.getElementById("status");if(el){el.textContent=msg;el.className=cls;}}
+
+// ── Confidence ──────────────────────────────────────────────────────────────
+function setConf(n){
+  selectedConf=(selectedConf===n)?0:n;
+  document.querySelectorAll('.conf-star-btn').forEach((btn,i)=>btn.classList.toggle('selected',i<selectedConf));
 }
 
-function drawDonut(canvasId, wins, losses) {
-  const canvas = document.getElementById(canvasId);
-  if (!canvas) return;
-  const ctx = canvas.getContext("2d");
-  const W = canvas.width, H = canvas.height;
-  const cx = W/2, cy = H/2, r = W*0.42, inner = W*0.27;
-  ctx.clearRect(0,0,W,H);
-  const total = wins + losses;
-  if (total === 0) {
-    ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.arc(cx,cy,inner,Math.PI*2,0,true);
-    ctx.fillStyle = "#1a2a1a"; ctx.fill(); return;
-  }
-  const winAngle = (wins/total)*Math.PI*2, gap = 0.04;
-  ctx.beginPath(); ctx.moveTo(cx,cy);
-  ctx.arc(cx,cy,r,-Math.PI/2+gap,-Math.PI/2+winAngle-gap);
-  ctx.arc(cx,cy,inner,-Math.PI/2+winAngle-gap,-Math.PI/2+gap,true);
-  ctx.closePath(); ctx.fillStyle="#2d6e2d"; ctx.fill();
-  ctx.strokeStyle="#5dde5d"; ctx.lineWidth=1.5; ctx.stroke();
-  if (losses > 0) {
-    ctx.beginPath(); ctx.moveTo(cx,cy);
-    ctx.arc(cx,cy,r,-Math.PI/2+winAngle+gap,-Math.PI/2+Math.PI*2-gap);
-    ctx.arc(cx,cy,inner,-Math.PI/2+Math.PI*2-gap,-Math.PI/2+winAngle+gap,true);
-    ctx.closePath(); ctx.fillStyle="#6e2d2d"; ctx.fill();
-    ctx.strokeStyle="#e05555"; ctx.lineWidth=1.5; ctx.stroke();
-  }
+// ── Match logging ────────────────────────────────────────────────────────────
+function getScoreInputs(){
+  return{mine:parseInt(document.getElementById("score-mine")?.value),opp:parseInt(document.getElementById("score-opp")?.value)};
+}
+function clearInputs(){
+  const m=document.getElementById("score-mine");if(m)m.value="";
+  const o=document.getElementById("score-opp");if(o)o.value="";
+  selectedConf=0;
+  document.querySelectorAll('.conf-star-btn').forEach(b=>b.classList.remove('selected'));
 }
 
-function drawBarChart(days) {
-  const maxP = Math.max(...days.map(([,v])=>v.played),1);
+async function logMatch(won){
+  if(!log[currentDate])log[currentDate]={played:0,won:0,history:[]};
+  let{mine,opp}=getScoreInputs();
+  if(isNaN(mine)||isNaN(opp)){mine=won?11:8;opp=won?8:11;}
+  const entry={result:won?"W":"L",my:mine,opp,conf:selectedConf||null};
+  log[currentDate].played++;if(won)log[currentDate].won++;
+  log[currentDate].history=[...(log[currentDate].history||[]),entry];
+  clearInputs();saveLocal();renderApp();await syncToSheet();
+  const el=document.getElementById("at");if(el)el.textContent=allTime();
+  if(navigator.vibrate)navigator.vibrate(won?[40]:[20,30,20]);
+}
+
+async function undoLast(){
+  const d=log[currentDate];if(!d||d.played===0)return;
+  const hist=[...(d.history||[])];const last=hist.pop();
+  const wasWin=(typeof last==='object')?last.result==="W":last==="W";
+  log[currentDate]={played:d.played-1,won:wasWin?d.won-1:d.won,history:hist};
+  if(log[currentDate].played===0)delete log[currentDate];
+  saveLocal();renderApp();await syncToSheet();
+}
+
+function changeDay(dir){
+  const [y,m,d]=currentDate.split("-").map(Number);
+  const dt=new Date(y,m-1,d+dir);const next=localDateStr(dt);
+  if(next>todayStr())return;currentDate=next;renderApp();
+}
+
+function switchTab(t){activeTab=t;renderApp();}
+function resetUrl(){if(confirm("Disconnect Google Sheet?")){localStorage.removeItem(URL_KEY);sheetUrl="";render();}}
+
+// ── Canvas helpers ───────────────────────────────────────────────────────────
+function drawDonut(id,wins,losses){
+  const c=document.getElementById(id);if(!c)return;
+  const ctx=c.getContext("2d"),W=c.width,H=c.height,cx=W/2,cy=H/2,r=W*0.42,inner=W*0.27;
+  ctx.clearRect(0,0,W,H);const total=wins+losses;
+  if(!total){ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.arc(cx,cy,inner,Math.PI*2,0,true);ctx.fillStyle="#1a2a1a";ctx.fill();return;}
+  const wa=(wins/total)*Math.PI*2,gap=0.04;
+  ctx.beginPath();ctx.arc(cx,cy,r,-Math.PI/2+gap,-Math.PI/2+wa-gap);ctx.arc(cx,cy,inner,-Math.PI/2+wa-gap,-Math.PI/2+gap,true);ctx.closePath();ctx.fillStyle="#2d6e2d";ctx.fill();ctx.strokeStyle="#5dde5d";ctx.lineWidth=1.5;ctx.stroke();
+  if(losses>0){ctx.beginPath();ctx.arc(cx,cy,r,-Math.PI/2+wa+gap,-Math.PI/2+Math.PI*2-gap);ctx.arc(cx,cy,inner,-Math.PI/2+Math.PI*2-gap,-Math.PI/2+wa+gap,true);ctx.closePath();ctx.fillStyle="#6e2d2d";ctx.fill();ctx.strokeStyle="#e05555";ctx.lineWidth=1.5;ctx.stroke();}
+}
+
+function drawWinRateLine(id,days){
+  const c=document.getElementById(id);if(!c||days.length<2)return;
+  const ctx=c.getContext("2d"),W=c.width,H=c.height;ctx.clearRect(0,0,W,H);
+  let cW=0,cP=0;const pts=days.map(([,v])=>{cW+=v.won;cP+=v.played;return Math.round(cW/cP*100);});
+  const pL=28,pR=10,pT=10,pB=20,gW=W-pL-pR,gH=H-pT-pB;
+  ctx.font="9px 'DM Mono',monospace";ctx.fillStyle="#4a7040";ctx.textAlign="right";
+  [0,25,50,75,100].forEach(v=>{
+    const y=pT+gH-(v/100)*gH;ctx.beginPath();ctx.moveTo(pL,y);ctx.lineTo(W-pR,y);ctx.strokeStyle="rgba(42,74,42,0.5)";ctx.lineWidth=0.5;ctx.stroke();ctx.fillText(v+"%",pL-3,y+3);
+  });
+  ctx.beginPath();pts.forEach((p,i)=>{const x=pL+(i/(pts.length-1))*gW,y=pT+gH-(p/100)*gH;i?ctx.lineTo(x,y):ctx.moveTo(x,y);});
+  ctx.strokeStyle="#a8f060";ctx.lineWidth=2;ctx.stroke();
+  ctx.lineTo(pL+gW,pT+gH);ctx.lineTo(pL,pT+gH);ctx.closePath();ctx.fillStyle="rgba(168,240,96,0.08)";ctx.fill();
+  pts.forEach((p,i)=>{const x=pL+(i/(pts.length-1))*gW,y=pT+gH-(p/100)*gH;ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.fillStyle="#a8f060";ctx.fill();});
+}
+
+// ── Bar charts ───────────────────────────────────────────────────────────────
+function drawBarChart(days){
+  const maxP=Math.max(...days.map(([,v])=>v.played),1);
   return `<div class="bar-chart-wrap"><div class="bar-chart-bars" style="min-width:${days.length*44}px">
     ${days.map(([date,v])=>{
       const p=v.played>0?Math.round(v.won/v.played*100):0;
       const wh=Math.max(Math.round(v.won/maxP*76),v.won>0?4:0);
       const lh=Math.max(Math.round((v.played-v.won)/maxP*76),(v.played-v.won)>0?4:0);
-      const {short}=fmtDate(date);
-      return `<div class="bar-col">
-        <div style="font-size:9px;color:var(--accent)">${p}%</div>
+      const{short}=fmtDate(date);
+      return `<div class="bar-col"><div style="font-size:9px;color:var(--accent)">${p}%</div>
         <div class="bar-stack"><div class="bar-w" style="height:${wh}px"></div><div class="bar-l" style="height:${lh}px"></div></div>
         <div style="font-size:9px;color:var(--muted)">${short.slice(0,3)}</div>
-        <div style="font-size:10px;color:#7ecf5a">${v.played}P</div>
-      </div>`;
-    }).join("")}
-  </div>
-  <div style="display:flex;gap:16px;justify-content:center;margin-top:10px;font-size:11px;color:var(--muted)">
-    <span style="color:var(--green)">■</span> Wins &nbsp; <span style="color:var(--red)">■</span> Losses
-  </div></div>`;
+        <div style="font-size:10px;color:#7ecf5a">${v.played}P</div></div>`;
+    }).join('')}
+  </div><div style="display:flex;gap:16px;justify-content:center;margin-top:10px;font-size:11px;color:var(--muted)">
+    <span style="color:var(--green)">■</span> Wins &nbsp;<span style="color:var(--red)">■</span> Losses</div></div>`;
 }
 
-function render() { if (!sheetUrl) { renderSetup(); return; } renderApp(); }
+function buildPointStats(days){
+  return days.map(([date,v])=>{
+    let pW=0,pL=0;
+    (v.history||[]).forEach(h=>{const e=typeof h==='object'?h:{my:h==='W'?11:8,opp:h==='W'?8:11};pW+=e.my||0;pL+=e.opp||0;});
+    return{date,ptsWon:pW,ptsLost:pL,played:v.played,won:v.won};
+  });
+}
 
-function renderSetup() {
-  document.getElementById("root").innerHTML = `
+function drawPointsBarChart(sd){
+  const has=sd.some(d=>d.ptsWon>0||d.ptsLost>0);if(!has)return"";
+  const maxP=Math.max(...sd.map(d=>d.ptsWon+d.ptsLost),1);
+  return `<div class="pts-bar-wrap"><div class="pts-bar-inner" style="min-width:${sd.length*44}px">
+    ${sd.map(d=>{
+      const wh=Math.max(Math.round(d.ptsWon/maxP*76),d.ptsWon>0?4:0);
+      const lh=Math.max(Math.round(d.ptsLost/maxP*76),d.ptsLost>0?4:0);
+      const{short}=fmtDate(d.date);const diff=d.ptsWon-d.ptsLost;
+      return `<div class="pts-col"><div style="font-size:9px;color:${diff>=0?'var(--green)':'var(--red)'}">${diff>=0?'+':''}${diff}</div>
+        <div class="pts-stack"><div class="pts-won-bar" style="height:${wh}px"></div><div class="pts-lost-bar" style="height:${lh}px"></div></div>
+        <div style="font-size:9px;color:var(--muted)">${short.slice(0,3)}</div>
+        <div style="font-size:10px;color:var(--muted)">${d.ptsWon+d.ptsLost}pts</div></div>`;
+    }).join('')}
+  </div><div style="display:flex;gap:16px;justify-content:center;margin-top:10px;font-size:11px;color:var(--muted)">
+    <span style="color:var(--green)">■</span> Pts Won &nbsp;<span style="color:var(--red)">■</span> Pts Lost</div></div>`;
+}
+
+// ── Confidence analytics ─────────────────────────────────────────────────────
+function buildConfStats(allDays){
+  const cd={1:{wins:0,played:0},2:{wins:0,played:0},3:{wins:0,played:0},4:{wins:0,played:0},5:{wins:0,played:0}};
+  allDays.forEach(([,v])=>(v.history||[]).forEach(h=>{
+    const e=typeof h==='object'?h:null;if(!e||!e.conf)return;
+    const c=e.conf;if(c>=1&&c<=5){cd[c].played++;if(e.result==='W')cd[c].wins++;}
+  }));
+  return cd;
+}
+
+function drawConfChart(cd){
+  const hasAny=Object.values(cd).some(d=>d.played>0);
+  if(!hasAny)return`<div style="text-align:center;color:var(--muted);font-size:12px;padding:20px 0;opacity:0.7">Log matches with confidence ratings to see this chart</div>`;
+
+  const rows=[1,2,3,4,5].map(lvl=>{
+    const d=cd[lvl];
+    if(!d.played)return`<div class="conf-row">
+      <div class="conf-row-lbl">${lvl}★</div>
+      <div class="conf-bar-track" style="opacity:0.25"><div style="flex:1;display:flex;align-items:center;padding-left:8px;font-size:10px;color:var(--muted)">no data</div></div>
+      <div class="conf-row-meta">—</div></div>`;
+    const wr=Math.round(d.wins/d.played*100);
+    const wPct=wr, lPct=100-wr;
+    return `<div class="conf-row">
+      <div class="conf-row-lbl">${lvl}★</div>
+      <div class="conf-bar-track">
+        <div class="conf-bar-win" style="width:${wPct}%">${wPct>=22?`<span class="conf-bar-lbl" style="color:#5dde5d">${d.wins}W</span>`:''}</div>
+        <div class="conf-bar-loss" style="width:${lPct}%">${lPct>=22?`<span class="conf-bar-lbl" style="color:#e05555">${d.played-d.wins}L</span>`:''}</div>
+      </div>
+      <div class="conf-row-meta">${wr}%<br><span style="font-size:9px">${d.played}M</span></div></div>`;
+  }).join('');
+
+  // Insight
+  const withData=[1,2,3,4,5].filter(l=>cd[l].played>=2);
+  let insight='';
+  if(withData.length>=2){
+    const rates=withData.map(l=>({lvl:l,wr:cd[l].wins/cd[l].played}));
+    const best=rates.reduce((a,b)=>a.wr>b.wr?a:b);
+    const worst=rates.reduce((a,b)=>a.wr<b.wr?a:b);
+    const hi5=cd[5].played>0?Math.round(cd[5].wins/cd[5].played*100):null;
+    const lo1=cd[1].played>0?Math.round(cd[1].wins/cd[1].played*100):null;
+    let msg;
+    if(hi5!==null&&lo1!==null){
+      const diff=hi5-lo1;
+      if(diff>20)msg=`Your ★5 confidence translates — you win <strong>${hi5}%</strong> of those matches, vs ${lo1}% when uncertain. <strong>Trust your gut.</strong>`;
+      else if(diff<-20)msg=`Interesting: you actually win more when less confident. You may play <strong>looser and more freely</strong> as the underdog.`;
+      else msg=`Win rate is fairly consistent across confidence levels — you perform <strong>reliably regardless of mindset</strong>.`;
+    } else {
+      msg=`Best at <strong>★${best.lvl}</strong> (${Math.round(best.wr*100)}%). Worst at <strong>★${worst.lvl}</strong> (${Math.round(worst.wr*100)}%). Log more data for deeper insight.`;
+    }
+    insight=`<div class="insight-box">🧠 ${msg}</div>`;
+  }
+  return`<div class="conf-chart-wrap">${rows}${insight}</div>`;
+}
+
+function buildCalibrationRows(allDays){
+  const cd=buildConfStats(allDays);
+  // Expected: stars map to theoretical expectation 1=20,2=40,3=60,4=80,5=100
+  const exp={1:20,2:40,3:60,4:80,5:100};
+  return[1,2,3,4,5].filter(l=>cd[l].played>=1).map(l=>({
+    lvl:l,actual:Math.round(cd[l].wins/cd[l].played*100),exp:exp[l],played:cd[l].played,
+    diff:Math.round(cd[l].wins/cd[l].played*100)-exp[l]
+  }));
+}
+
+// ── Streaks ──────────────────────────────────────────────────────────────────
+function computeStreaks(hist){
+  let cur=0,curT=null,bW=0,bL=0;
+  hist.forEach(h=>{const r=typeof h==='object'?h.result:h;if(r===curT){cur++;}else{if(curT==='W')bW=Math.max(bW,cur);if(curT==='L')bL=Math.max(bL,cur);curT=r;cur=1;}});
+  if(curT==='W')bW=Math.max(bW,cur);if(curT==='L')bL=Math.max(bL,cur);
+  return{bestWin:bW,bestLoss:bL,currentStreak:cur,currentStreakType:curT};
+}
+
+// ── Render ───────────────────────────────────────────────────────────────────
+function render(){if(!sheetUrl){renderSetup();return;}renderApp();}
+
+function renderSetup(){
+  document.getElementById("root").innerHTML=`
     <div class="setup-wrap">
       <div class="setup-title">🏓 Pickleball</div>
       <div class="setup-sub">Connect your Google Sheet in 3 steps — free, no API key needed.</div>
-      <div class="setup-card">
-        <div class="setup-step">STEP 1 — Create the Google Sheet</div>
-        <div class="setup-desc">Go to <a href="https://sheets.new" target="_blank">sheets.new</a> on a computer. Name it <strong>Pickleball Log</strong>.</div>
-      </div>
-      <div class="setup-card">
-        <div class="setup-step">STEP 2 — Add the Apps Script</div>
+      <div class="setup-card"><div class="setup-step">STEP 1 — Create the Google Sheet</div>
+        <div class="setup-desc">Go to <a href="https://sheets.new" target="_blank">sheets.new</a> on a computer. Name it <strong>Pickleball Log</strong>.</div></div>
+      <div class="setup-card"><div class="setup-step">STEP 2 — Add the Apps Script</div>
         <div class="setup-desc">In your sheet: <strong>Extensions → Apps Script</strong>. Delete existing code and paste this:
           <code>function doPost(e){try{var d=JSON.parse(e.postData.contents);var ss=SpreadsheetApp.getActiveSpreadsheet();var sh=ss.getSheetByName("Log")||ss.insertSheet("Log");sh.clearContents();sh.appendRow(["Date","Played","Won","Lost","Win%"]);var log=d.log;Object.keys(log).sort().forEach(function(date){var v=log[date];var pct=v.played>0?Math.round(v.won/v.played*100):0;sh.appendRow([date,v.played,v.won,v.played-v.won,pct+"%"]);});return ContentService.createTextOutput("ok");}catch(err){return ContentService.createTextOutput(err.toString());}}</code>
-          Click <strong>Save</strong>.
-        </div>
-      </div>
-      <div class="setup-card">
-        <div class="setup-step">STEP 3 — Deploy & paste URL</div>
+          Click <strong>Save</strong>.</div></div>
+      <div class="setup-card"><div class="setup-step">STEP 3 — Deploy & paste URL</div>
         <div class="setup-desc"><strong>Deploy → New deployment → Web app</strong><br>Set access to <strong>Anyone</strong> → Deploy → copy URL.</div>
         <input class="setup-input" id="urlInput" type="url" placeholder="https://script.google.com/macros/s/...">
-        <button class="setup-btn" onclick="saveUrl()">CONNECT →</button>
-      </div>
+        <button class="setup-btn" onclick="saveUrl()">CONNECT →</button></div>
     </div>`;
 }
 
-function saveUrl() {
-  const v = document.getElementById("urlInput").value.trim();
-  if (!v.includes("script.google.com")) { alert("Paste the Apps Script Web app URL"); return; }
-  sheetUrl = v; localStorage.setItem(URL_KEY, sheetUrl); render();
+function saveUrl(){
+  const v=document.getElementById("urlInput").value.trim();
+  if(!v.includes("script.google.com")){alert("Paste the Apps Script Web app URL");return;}
+  sheetUrl=v;localStorage.setItem(URL_KEY,sheetUrl);render();
 }
 
-function renderApp() {
-  const d = log[currentDate] || { played:0, won:0, history:[] };
-  const lost = d.played - d.won;
-  const pct = d.played>0 ? Math.round(d.won/d.played*100)+"%" : "—";
-  const { short, long } = fmtDate(currentDate);
-  const isToday = currentDate >= todayStr();
-  const canUndo = (d.history||[]).length > 0;
+const PADDLE=`<svg width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" rx="20" fill="#1a3d1a"/><ellipse cx="52" cy="42" rx="26" ry="28" fill="#2d6e2d" stroke="#5dde5d" stroke-width="2.5"/><rect x="47" y="67" width="10" height="22" rx="5" fill="#a8f060"/><line x1="52" y1="16" x2="52" y2="68" stroke="#a8f060" stroke-width="1.5" opacity="0.5"/><line x1="27" y1="42" x2="77" y2="42" stroke="#a8f060" stroke-width="1.5" opacity="0.5"/><circle cx="76" cy="24" r="10" fill="#a8f060"/><path d="M70 20 Q76 16 82 20" stroke="#0b150b" stroke-width="1.2" fill="none"/><path d="M70 28 Q76 32 82 28" stroke="#0b150b" stroke-width="1.2" fill="none"/></svg>`;
 
-  const days = Object.entries(log).filter(([,v])=>v.played>0).sort((a,b)=>b[0].localeCompare(a[0]));
-  const tp = days.reduce((s,[,v])=>s+v.played,0), tw = days.reduce((s,[,v])=>s+v.won,0), tl = tp-tw;
-  const overallPct = tp>0 ? Math.round(tw/tp*100) : 0;
-  const cdays = [...days].sort((a,b)=>a[0].localeCompare(b[0])).slice(-14);
-  const todayWins = d.won, todayLosses = d.played-d.won;
-  const todayPct = d.played>0 ? Math.round(d.won/d.played*100) : 0;
+function renderApp(){
+  const d=log[currentDate]||{played:0,won:0,history:[]};
+  const lost=d.played-d.won;
+  const pct=d.played>0?Math.round(d.won/d.played*100)+"%":"—";
+  const{short,long}=fmtDate(currentDate);
+  const isToday=currentDate>=todayStr();
+  const canUndo=(d.history||[]).length>0;
 
-  // SVG paddle icon inline for header
-  const paddleSVG = `<svg width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-    <rect width="100" height="100" rx="20" fill="#1a3d1a"/>
-    <ellipse cx="52" cy="42" rx="26" ry="28" fill="#2d6e2d" stroke="#5dde5d" stroke-width="2.5"/>
-    <rect x="47" y="67" width="10" height="22" rx="5" fill="#a8f060"/>
-    <line x1="52" y1="16" x2="52" y2="68" stroke="#a8f060" stroke-width="1.5" opacity="0.5"/>
-    <line x1="27" y1="42" x2="77" y2="42" stroke="#a8f060" stroke-width="1.5" opacity="0.5"/>
-    <circle cx="76" cy="24" r="10" fill="#a8f060"/>
-    <path d="M70 20 Q76 16 82 20" stroke="#0b150b" stroke-width="1.2" fill="none"/>
-    <path d="M70 28 Q76 32 82 28" stroke="#0b150b" stroke-width="1.2" fill="none"/>
-  </svg>`;
+  const days=Object.entries(log).filter(([,v])=>v.played>0).sort((a,b)=>b[0].localeCompare(a[0]));
+  const tp=days.reduce((s,[,v])=>s+v.played,0),tw=days.reduce((s,[,v])=>s+v.won,0),tl=tp-tw;
+  const overallPct=tp>0?Math.round(tw/tp*100):0;
+  const cdays=[...days].sort((a,b)=>a[0].localeCompare(b[0])).slice(-14);
+  const todayWins=d.won,todayLosses=d.played-d.won;
+  const todayPct=d.played>0?Math.round(d.won/d.played*100):0;
+  const allHistory=days.slice().reverse().flatMap(([,v])=>v.history||[]);
+  const confData=buildConfStats(days);
+  const calRows=buildCalibrationRows(days);
 
-  document.getElementById("root").innerHTML = `
-    <header>
-      ${paddleSVG}
-      <div>
-        <div class="h-title">Pickleball Log</div>
-        <div class="h-sub" id="at">${allTime()}</div>
-      </div>
-      <div id="status">Synced ✓</div>
-    </header>
+  // Today match list
+  const tmHtml=(d.history||[]).map((h,i)=>{
+    const e=typeof h==='object'?h:{result:h,my:h==='W'?11:8,opp:h==='W'?8:11,conf:null};
+    const isW=e.result==='W';
+    const stars=e.conf?'★'.repeat(e.conf):'';
+    return `<div class="match-item">
+      <div class="match-num">#${i+1}</div>
+      <div class="match-result" style="color:${isW?'var(--green)':'var(--red)'}">${isW?'WIN':'LOSS'}</div>
+      ${stars?`<div class="match-conf">${stars}</div>`:''}
+      ${(e.my||e.opp)?`<div class="match-score" style="color:${isW?'var(--green)':'var(--red)'}">${e.my}–${e.opp}</div>`:''}
+    </div>`;
+  }).join('');
+
+  // Confidence star buttons
+  const confHtml=`
+    <div class="entry-section-title">CONFIDENCE <span>— how likely do you think you'll win?</span></div>
+    <div class="conf-stars">
+      ${[1,2,3,4,5].map(n=>`
+        <button class="conf-star-btn${selectedConf>=n?' selected':''}" onclick="setConf(${n})" title="${n} star${n>1?'s':''}">
+          <div class="si">★</div><div>${n}</div>
+        </button>`).join('')}
+    </div>`;
+
+  document.getElementById("root").innerHTML=`
+    <header>${PADDLE}<div><div class="h-title">Pickleball Log</div><div class="h-sub" id="at">${allTime()}</div></div><div id="status">Synced ✓</div></header>
     <nav>
       <button onclick="switchTab('today')" class="${activeTab==='today'?'active':''}">Today</button>
       <button onclick="switchTab('history')" class="${activeTab==='history'?'active':''}">History</button>
       <button onclick="switchTab('chart')" class="${activeTab==='chart'?'active':''}">Chart</button>
     </nav>
     <main>
-      <div id="tab-today" class="tab${activeTab==='today'?' active':''}">
-        <div class="date-bar">
-          <button class="date-nav" onclick="changeDay(-1)">‹</button>
-          <div><div class="date-label">${short}</div><div class="date-sub">${long}</div></div>
-          <button class="date-nav" onclick="changeDay(1)" ${isToday?"disabled":""}>›</button>
-        </div>
-        <div class="score-card">
-          <div class="big-num">${d.played}</div>
-          <div class="big-lbl">Matches Played</div>
-          <div class="wl-row">
-            <div class="wl-cell"><div class="wl-num" style="color:var(--green)">${d.won}</div><div class="wl-lbl">WINS</div></div>
-            <div class="wl-cell" style="border-left:1px solid var(--border)"><div class="wl-num" style="color:var(--red)">${lost}</div><div class="wl-lbl">LOSSES</div></div>
-            <div class="wl-cell" style="border-left:1px solid var(--border)"><div class="wl-num" style="color:var(--accent)">${pct}</div><div class="wl-lbl">WIN %</div></div>
-          </div>
-        </div>
-        <div class="btn-row">
-          <button class="btn btn-win" onclick="logMatch(true)">✓ WIN</button>
-          <button class="btn btn-loss" onclick="logMatch(false)">✗ LOSS</button>
-        </div>
-        <button class="btn-undo" onclick="undoLast()" ${canUndo?"":"disabled"}>↩ Undo last match</button>
-        <span class="reset-link" onclick="resetUrl()">Change Google Sheet connection</span>
+
+    <!-- TODAY -->
+    <div id="tab-today" class="tab${activeTab==='today'?' active':''}">
+      <div class="date-bar">
+        <button class="date-nav" onclick="changeDay(-1)">‹</button>
+        <div><div class="date-label">${short}</div><div class="date-sub">${long}</div></div>
+        <button class="date-nav" onclick="changeDay(1)" ${isToday?"disabled":""}>›</button>
       </div>
 
-      <div id="tab-history" class="tab${activeTab==='history'?' active':''}">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--accent);letter-spacing:2px">ALL DAYS</div>
-          ${tp>0?`<div style="font-size:11px;color:var(--muted);text-align:right">${days.length} days<br>${tp} matches · ${overallPct}% win</div>`:""}
+      <div class="score-card">
+        <div class="big-num">${d.played}</div><div class="big-lbl">Matches Played</div>
+        <div class="wl-row">
+          <div class="wl-cell"><div class="wl-num" style="color:var(--green)">${d.won}</div><div class="wl-lbl">WINS</div></div>
+          <div class="wl-cell"><div class="wl-num" style="color:var(--red)">${lost}</div><div class="wl-lbl">LOSSES</div></div>
+          <div class="wl-cell"><div class="wl-num" style="color:var(--accent)">${pct}</div><div class="wl-lbl">WIN %</div></div>
         </div>
-        ${days.length===0
-          ? `<div class="empty"><div style="font-size:36px;margin-bottom:12px">🏓</div>No matches logged yet</div>`
-          : days.map(([date,v])=>{
-              const p=v.played>0?Math.round(v.won/v.played*100):0;
-              const {short}=fmtDate(date);
-              return `<div class="day-row">
-                <div><div style="font-size:12px">${short}</div><div style="font-size:10px;color:var(--muted)">${date}</div></div>
-                <div style="display:flex;gap:7px;align-items:center;margin-left:auto">
-                  <span class="pill" style="background:rgba(168,240,96,0.1);color:var(--accent)">${v.played}P</span>
-                  <span class="pill" style="background:rgba(93,222,93,0.12);color:var(--green)">${v.won}W</span>
-                  <span class="pill" style="background:rgba(224,85,85,0.12);color:var(--red)">${v.played-v.won}L</span>
-                  <span style="font-size:11px;color:var(--muted);min-width:30px;text-align:right">${p}%</span>
-                </div>
-              </div>`;
-            }).join("")}
       </div>
 
-      <div id="tab-chart" class="tab${activeTab==='chart'?' active':''}">
-        ${tp===0 ? `<div class="empty"><div style="font-size:36px;margin-bottom:12px">📊</div>No data yet — log some matches first</div>` : `
+      <div class="entry-panel">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;color:var(--accent);letter-spacing:2px;margin-bottom:14px">PRE-MATCH <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);opacity:0.7;letter-spacing:0;text-transform:none">— all optional</span></div>
+        ${confHtml}
+        <hr class="entry-divider">
+        <div class="entry-section-title">SCORE <span>— blank = 11-8 win / 8-11 loss</span></div>
+        <div class="score-inputs">
+          <input id="score-mine" type="number" min="0" max="99" placeholder="You" inputmode="numeric">
+          <div class="score-vs">VS</div>
+          <input id="score-opp" type="number" min="0" max="99" placeholder="Them" inputmode="numeric">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-win" onclick="logMatch(true)">✓ WIN</button>
+        <button class="btn btn-loss" onclick="logMatch(false)">✗ LOSS</button>
+      </div>
+      <button class="btn-undo" onclick="undoLast()" ${canUndo?"":"disabled"}>↩ Undo last match</button>
+
+      ${tmHtml?`<div class="match-list" style="margin-top:16px">${tmHtml}</div>`:''}
+      <span class="reset-link" onclick="resetUrl()">Change Google Sheet connection</span>
+    </div>
+
+    <!-- HISTORY -->
+    <div id="tab-history" class="tab${activeTab==='history'?' active':''}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--accent);letter-spacing:2px">ALL DAYS</div>
+        ${tp>0?`<div style="font-size:11px;color:var(--muted);text-align:right">${days.length} days<br>${tp} matches · ${overallPct}% win</div>`:''}
+      </div>
+      ${days.length===0
+        ?`<div class="empty"><div style="font-size:36px;margin-bottom:12px">🏓</div>No matches logged yet</div>`
+        :days.map(([date,v])=>{
+          const p=v.played>0?Math.round(v.won/v.played*100):0;
+          const{short}=fmtDate(date);
+          let pW=0,pL=0,confSum=0,confCount=0;
+          (v.history||[]).forEach(h=>{
+            const e=typeof h==='object'?h:{my:h==='W'?11:8,opp:h==='W'?8:11};
+            pW+=e.my||0;pL+=e.opp||0;
+            if(e.conf){confSum+=e.conf;confCount++;}
+          });
+          const ptsDiff=pW-pL;
+          const avgConf=confCount>0?(confSum/confCount).toFixed(1):null;
+          return `<div class="day-row">
+            <div>
+              <div style="font-size:12px">${short}</div>
+              <div style="font-size:10px;color:var(--muted)">${date}</div>
+              ${(pW||pL)?`<div style="font-size:10px;color:${ptsDiff>=0?'var(--green)':'var(--red)'}">Pts ${pW}–${pL}</div>`:''}
+              ${avgConf?`<div style="font-size:10px;color:var(--gold)">avg ★${avgConf}</div>`:''}
+            </div>
+            <div style="display:flex;gap:7px;align-items:center;margin-left:auto">
+              <span class="pill" style="background:rgba(168,240,96,0.1);color:var(--accent)">${v.played}P</span>
+              <span class="pill" style="background:rgba(93,222,93,0.12);color:var(--green)">${v.won}W</span>
+              <span class="pill" style="background:rgba(224,85,85,0.12);color:var(--red)">${v.played-v.won}L</span>
+              <span style="font-size:11px;color:var(--muted);min-width:30px;text-align:right">${p}%</span>
+            </div>
+          </div>`;
+        }).join('')}
+    </div>
+
+    <!-- CHART -->
+    <div id="tab-chart" class="tab${activeTab==='chart'?' active':''}">
+      ${tp===0?`<div class="empty"><div style="font-size:36px;margin-bottom:12px">📊</div>No data yet — log some matches first</div>`:(() => {
+        const streaks=computeStreaks(allHistory);
+        const statDays=buildPointStats(cdays);
+        const totalPW=statDays.reduce((s,d)=>s+d.ptsWon,0);
+        const totalPL=statDays.reduce((s,d)=>s+d.ptsLost,0);
+        const hasPoints=totalPW>0||totalPL>0;
+        const matchCount14=cdays.reduce((s,[,v])=>s+v.played,0);
+        const avgPW=hasPoints&&matchCount14?(totalPW/matchCount14).toFixed(1):"—";
+        const ptsDiffAll=totalPW-totalPL;
+        const hasConfData=Object.values(confData).some(d=>d.played>0);
+
+        return`
+        <!-- Donut all-time -->
         <div class="chart-section">
           <div class="chart-section-title">ALL-TIME WIN RATE</div>
           <div class="donut-wrap">
-            <div class="donut-container">
-              <canvas id="donut-all" width="220" height="220"></canvas>
+            <div class="donut-container"><canvas id="donut-all" width="220" height="220"></canvas>
               <div class="donut-center"><div class="donut-pct">${overallPct}%</div><div class="donut-label">WIN RATE</div></div>
             </div>
             <div class="donut-legend">
@@ -370,66 +576,105 @@ function renderApp() {
             </div>
           </div>
         </div>
+
+        <!-- Donut today -->
         ${d.played>0?`
         <div class="chart-section">
           <div class="chart-section-title">TODAY — ${short}</div>
           <div class="donut-wrap">
-            <div class="donut-container">
-              <canvas id="donut-today" width="220" height="220"></canvas>
+            <div class="donut-container"><canvas id="donut-today" width="220" height="220"></canvas>
               <div class="donut-center"><div class="donut-pct">${todayPct}%</div><div class="donut-label">TODAY</div></div>
             </div>
             <div class="donut-legend">
               <div class="legend-item"><div class="legend-dot" style="background:#5dde5d"></div>
-                <div><div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--green)">${todayWins} Wins</div><div style="font-size:10px;color:var(--muted)">${todayPct}%</div></div>
-              </div>
+                <div><div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--green)">${todayWins} Wins</div></div></div>
               <div class="legend-item"><div class="legend-dot" style="background:#e05555"></div>
-                <div><div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--red)">${todayLosses} Losses</div><div style="font-size:10px;color:var(--muted)">${100-todayPct}%</div></div>
-              </div>
+                <div><div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--red)">${todayLosses} Losses</div></div></div>
             </div>
           </div>
-        </div>`:""}
-        ${cdays.length>1?`<div class="chart-section"><div class="chart-section-title">LAST 14 DAYS</div>${drawBarChart(cdays)}</div>`:""}
+        </div>`:''}
+
+        <!-- ★ Confidence vs Win Rate -->
+        <div class="chart-section">
+          <div class="chart-section-title">★ CONFIDENCE VS WIN RATE</div>
+          <div class="chart-section-sub">Actual win rate at each pre-match confidence level</div>
+          ${drawConfChart(confData)}
+        </div>
+
+        <!-- Calibration table -->
+        ${calRows.length>=2?`
+        <div class="chart-section">
+          <div class="chart-section-title">CALIBRATION CHECK</div>
+          <div class="chart-section-sub">Does your confidence predict your result?</div>
+          <table style="width:100%;border-collapse:collapse;font-size:11px">
+            <thead><tr style="color:var(--muted);text-align:left">
+              <th style="padding:6px 4px">CONF</th>
+              <th style="padding:6px 4px;text-align:center">WIN RATE</th>
+              <th style="padding:6px 4px;text-align:center">MATCHES</th>
+              <th style="padding:6px 4px;text-align:right">VS EXPECTED</th>
+            </tr></thead>
+            <tbody>${calRows.map(r=>`<tr style="border-top:1px solid var(--border)">
+              <td style="padding:8px 4px;color:var(--gold)">${'★'.repeat(r.lvl)}</td>
+              <td style="padding:8px 4px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--accent)">${r.actual}%</td>
+              <td style="padding:8px 4px;text-align:center;color:var(--muted)">${r.played}</td>
+              <td style="padding:8px 4px;text-align:right;font-family:'Bebas Neue',sans-serif;font-size:15px;color:${r.diff>=0?'var(--green)':'var(--red)'}">${r.diff>=0?'+':''}${r.diff}%</td>
+            </tr>`).join('')}</tbody>
+          </table>
+          <div style="font-size:9px;color:var(--muted);margin-top:8px;text-align:center">Expected: ★1=20% ★2=40% ★3=60% ★4=80% ★5=100%</div>
+        </div>`:''}
+
+        <!-- Bar chart 14d -->
+        ${cdays.length>1?`<div class="chart-section"><div class="chart-section-title">LAST 14 DAYS — MATCH RESULTS</div>${drawBarChart(cdays)}</div>`:''}
+
+        <!-- Points bar chart -->
+        ${(cdays.length>0&&hasPoints)?`
+        <div class="chart-section">
+          <div class="chart-section-title">LAST 14 DAYS — POINTS WON/LOST</div>
+          ${drawPointsBarChart(statDays)}
+        </div>`:''}
+
+        <!-- Win rate trend -->
+        ${days.length>1?`
+        <div class="chart-section">
+          <div class="chart-section-title">WIN RATE TREND</div>
+          <div class="trend-wrap"><canvas id="trend-line" width="400" height="120" style="width:100%;height:120px"></canvas></div>
+          <div style="font-size:10px;color:var(--muted);text-align:center;margin-top:8px">Cumulative win rate over all sessions</div>
+        </div>`:''}
+
+        <!-- Streaks -->
+        <div class="chart-section">
+          <div class="chart-section-title">STREAK ANALYSIS</div>
+          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+            <div class="stat-box" style="flex:1;min-width:100px"><div class="stat-val" style="color:var(--green)">${streaks.bestWin}</div><div class="stat-lbl">BEST WIN STREAK</div></div>
+            <div class="stat-box" style="flex:1;min-width:100px"><div class="stat-val" style="color:var(--red)">${streaks.bestLoss}</div><div class="stat-lbl">WORST LOSS STREAK</div></div>
+            <div class="stat-box" style="flex:1;min-width:100px"><div class="stat-val" style="color:${streaks.currentStreakType==='W'?'var(--green)':'var(--red)'}">${streaks.currentStreak}</div><div class="stat-lbl">CURRENT (${streaks.currentStreakType||'—'})</div></div>
+          </div>
+        </div>
+
+        <!-- Key stats -->
         <div class="stat-grid">
           <div class="stat-box"><div class="stat-val">${tp}</div><div class="stat-lbl">PLAYED</div></div>
           <div class="stat-box"><div class="stat-val">${tw}</div><div class="stat-lbl">WINS</div></div>
           <div class="stat-box"><div class="stat-val">${overallPct}%</div><div class="stat-lbl">WIN RATE</div></div>
-        </div>`}
-      </div>
+        </div>
+        ${hasPoints?`<div class="stat-grid-2" style="margin-top:10px">
+          <div class="stat-box"><div class="stat-val" style="font-size:20px">${avgPW}</div><div class="stat-lbl">AVG PTS WON/MATCH</div></div>
+          <div class="stat-box"><div class="stat-val" style="font-size:20px;color:${ptsDiffAll>=0?'var(--green)':'var(--red)'}">${ptsDiffAll>=0?'+':''}${ptsDiffAll}</div><div class="stat-lbl">POINT DIFF (14D)</div></div>
+        </div>`:''}
+        `;
+      })()}
+    </div>
     </main>`;
 
-  if (activeTab==="chart" && tp>0) {
+  if(activeTab==="chart"&&tp>0){
     requestAnimationFrame(()=>{
       drawDonut("donut-all",tw,tl);
-      if(d.played>0) drawDonut("donut-today",todayWins,todayLosses);
+      if(d.played>0)drawDonut("donut-today",todayWins,todayLosses);
+      const sd=[...Object.entries(log).filter(([,v])=>v.played>0)].sort((a,b)=>a[0].localeCompare(b[0]));
+      if(sd.length>1){const canvas=document.getElementById("trend-line");if(canvas){canvas.width=canvas.offsetWidth||400;drawWinRateLine("trend-line",sd);}}
     });
   }
 }
-
-async function logMatch(won) {
-  if (!log[currentDate]) log[currentDate]={played:0,won:0,history:[]};
-  log[currentDate].played++; if(won) log[currentDate].won++;
-  log[currentDate].history=[...(log[currentDate].history||[]),won?"W":"L"];
-  saveLocal(); renderApp(); await syncToSheet();
-  const el=document.getElementById("at"); if(el) el.textContent=allTime();
-  if(navigator.vibrate) navigator.vibrate(won?[40]:[20,30,20]);
-}
-
-async function undoLast() {
-  const d=log[currentDate]; if(!d||d.played===0) return;
-  const hist=[...(d.history||[])]; const last=hist.pop();
-  log[currentDate]={played:d.played-1,won:last==="W"?d.won-1:d.won,history:hist};
-  if(log[currentDate].played===0) delete log[currentDate];
-  saveLocal(); renderApp(); await syncToSheet();
-}
-
-function changeDay(dir) {
-  const [y,m,d]=currentDate.split("-").map(Number);
-  const dt=new Date(y,m-1,d+dir); const next=dt.toISOString().slice(0,10);
-  if(next>todayStr()) return; currentDate=next; renderApp();
-}
-
-function switchTab(t) { activeTab=t; renderApp(); }
-function resetUrl() { if(confirm("Disconnect Google Sheet?")){ localStorage.removeItem(URL_KEY); sheetUrl=""; render(); } }
 
 render();
 </script>
